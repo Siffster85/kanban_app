@@ -8,8 +8,39 @@ import session from "express-session";
 import env from "./util/validateEnv";
 import MongoStore from "connect-mongo";
 import { requiresAuth } from "./middleware/auth";
+import cors from "cors";
 
 const app = express();
+
+const allowedOrigins = env.ALLOWED_ORIGINS;
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization", "Accept", "X-Custom-Header"],
+  }),
+);
+
+app.options("*", cors({
+  origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization", "Accept", "X-Custom-Header"],
+}));
 
 app.use(morgan("dev"));
 
@@ -24,7 +55,7 @@ app.use(session({
     },
     rolling: true,
     store: MongoStore.create({
-        mongoUrl: env.MONGO_CONNECTION_STRING,
+        mongoUrl: process.env.MONGODB_URI,
     }),
 }));
 

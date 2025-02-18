@@ -2,11 +2,9 @@ un: testuser
 pw: test123
 
 
-need to go through and test all functionality and ensure functions all work correctly with multiple projects with seperate tasks
+Mono repo, will need to spread the hosting as before:
+  BE = Vercel
+  FE = Netlify
+  DB = Atlas
 
-    create an account, project, task
-    edit project and task
-    delete project and task
-
-make look better
-
+BE Cors Origin set to * and still getting cors errors, potentially not CORS at all.
